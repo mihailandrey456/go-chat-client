@@ -1,12 +1,12 @@
 package main
 
 import (
-	"net"
-	"log"
-	tea "github.com/charmbracelet/bubbletea"
-	"errors"
-	"andrewka/chatclient/tui"
 	"andrewka/chatclient/message"
+	"andrewka/chatclient/tui"
+	"errors"
+	tea "github.com/charmbracelet/bubbletea"
+	"log"
+	"net"
 )
 
 var p *tea.Program
@@ -29,6 +29,7 @@ func main() {
 	}
 }
 
+// handleConn читает поток и отправляет входящие сообщения tui-приложению.
 func handleConn(conn net.Conn) {
 	d := message.Decoder{conn}
 	msgCh := make(chan message.Msg)
@@ -38,10 +39,10 @@ func handleConn(conn net.Conn) {
 			p.Send(tui.OuterMsg(msg))
 		}
 	}()
-	
+
 	if err := d.Decode(msgCh); err != nil {
 		p.Send(tui.ErrMsg{
-			Err: errors.New("Ошибка при подключении к серверу. Выход из программы..."),
+			Err:   errors.New("Ошибка при подключении к серверу. Выход из программы..."),
 			Fatal: true,
 		})
 	}

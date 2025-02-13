@@ -1,7 +1,7 @@
 package message
 
 type Msg struct {
-	From string
+	From    string
 	Content string
 }
 

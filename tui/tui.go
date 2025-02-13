@@ -2,15 +2,15 @@ package tui
 
 import (
 	"fmt"
-	"strings"
-	"net"
 	"io"
+	"net"
+	"strings"
 
+	"andrewka/chatclient/message"
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"andrewka/chatclient/message"
 )
 
 const gap = "\n\n"
@@ -21,9 +21,9 @@ func NewProgram(conn net.Conn) *tea.Program {
 
 type (
 	OuterMsg message.Msg
-	ErrMsg struct {
-		Err error
-		Fatal bool		
+	ErrMsg   struct {
+		Err   error
+		Fatal bool
 	}
 )
 
@@ -36,8 +36,8 @@ type model struct {
 	messages    []string
 	textarea    textarea.Model
 	senderStyle lipgloss.Style
-	errorStyle lipgloss.Style
-	conn 		net.Conn
+	errorStyle  lipgloss.Style
+	conn        net.Conn
 }
 
 func initialModel(conn net.Conn) model {
@@ -65,8 +65,8 @@ func initialModel(conn net.Conn) model {
 		messages:    []string{},
 		viewport:    vp,
 		senderStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
-		errorStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("10")),
-		conn:		 conn,
+		errorStyle:  lipgloss.NewStyle().Foreground(lipgloss.Color("10")),
+		conn:        conn,
 	}
 }
 
@@ -101,7 +101,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter:
 			input := m.textarea.Value()
 			m.textarea.Reset()
-			_, err := io.WriteString(m.conn, input + "\n")
+			_, err := io.WriteString(m.conn, input+"\n")
 			if err != nil {
 				m.addMessage(m.errorStyle.Render("Chat Client: ") + "Сообщение не доставлено")
 				m.textarea.SetValue(input)
@@ -110,7 +110,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case OuterMsg:
-		m.addMessage(m.senderStyle.Render(msg.From + ": ") + msg.Content)
+		m.addMessage(m.senderStyle.Render(msg.From+": ") + msg.Content)
 
 	case ErrMsg:
 		m.addMessage(m.errorStyle.Render("Chat Client: ") + msg.String())
