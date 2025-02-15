@@ -4,15 +4,23 @@ import (
 	"andrewka/chatclient/message"
 	"andrewka/chatclient/tui"
 	"errors"
+	"flag"
 	tea "github.com/charmbracelet/bubbletea"
 	"log"
 	"net"
 )
 
 var p *tea.Program
+var address = flag.String("address", "", "Адрес чат-сервера")
 
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	flag.Parse()
+	if *address == "" {
+		flag.PrintDefaults()
+		return
+	}
+
+	conn, err := net.Dial("tcp", *address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +33,7 @@ func main() {
 	}()
 
 	if _, err := p.Run(); err != nil {
-		log.Fatal("error running program:", err)
+		log.Fatal("Произошла ошибка во время выполнения программы:", err)
 	}
 }
 
