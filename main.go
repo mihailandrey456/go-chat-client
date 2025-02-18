@@ -3,6 +3,7 @@ package main
 import (
 	"andrewka/chatclient/message"
 	"andrewka/chatclient/tui"
+	"crypto/tls"
 	"errors"
 	"flag"
 	tea "github.com/charmbracelet/bubbletea"
@@ -20,7 +21,7 @@ func main() {
 		return
 	}
 
-	conn, err := net.Dial("tcp", *address)
+	conn, err := newConn(*address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,6 +36,11 @@ func main() {
 	if _, err := p.Run(); err != nil {
 		log.Fatal("Произошла ошибка во время выполнения программы:", err)
 	}
+}
+
+func newConn(address string) (net.Conn, error) {
+	config := tls.Config{}
+	return tls.Dial("tcp", address, &config)
 }
 
 // handleConn читает поток и отправляет входящие сообщения tui-приложению.
